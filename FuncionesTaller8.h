@@ -1,17 +1,20 @@
 #include <string.h>
 
 #define MaximoProductos 5
-#define MaximoNombre 30
 
-
+struct Producto {
+    char nombre[5];
+    float precio;
+    int codigo;
+    int cantidad;
+    int CantidadFabricada;
+    float tiempoFabricacion; 
+};
 // Funciones
 int pedirCantidad();
-void ingresarProductos(char nombres[][MaximoNombre], float precios[], int cantidad);
-void mostrarProductos(char nombres[][MaximoNombre], float precios[], int cantidad);
-void buscarProducto(char nombres[][MaximoNombre], float precios[], int cantidad);
-void mostrarMasCaro(char nombres[][MaximoNombre], float precios[], int cantidad);
-void mostrarMasBarato(char nombres[][MaximoNombre], float precios[], int cantidad);
-void calcularPromedio(float precios[], int cantidad);
+void ingresarProductos(struct Producto productos[], int cantidad);
+void mostrarProductos(struct Producto productos[], int cantidad);
+
 
 // Definiciones de funciones
 int pedirCantidad() {
@@ -31,70 +34,29 @@ REPETIR:
 }
 
 
-void ingresarProductos(char nombres[][MaximoNombre], float precios[], int cantidad) {
+void ingresarProductos(struct Producto productos[], int cantidad) {
     for (int i = 0; i < cantidad; i++) {
-        printf("\nProducto %d:\n", i + 1);
-        fflush(stdin);
-        printf("  Nombre: ");
-        fgets(nombres[i], MaximoNombre, stdin);
-        nombres[i][strcspn(nombres[i], "\n")] = '\0'; // Eliminar salto de línea
-        printf("  Precio: $ ");
-        scanf("%f", &precios[i]);
+        printf("\nProducto %d\n", i + 1);
+        printf("Nombre: ");
+        fgets(productos[i].nombre, sizeof(productos[i].nombre), stdin);
+        productos[i].nombre[strcspn(productos[i].nombre, "\n")] = '\0'; // Eliminar el salto de línea
+        printf("Precio: $ ");
+        scanf("%f", &productos[i].precio);
+        printf("Codigo: ");
+        scanf("%d", &productos[i].codigo);
+        printf("Cantidad demandada: ");
+        scanf("%d", &productos[i].cantidad);
+        printf("Tiempo por unidad (horas): ");
+        scanf("%f", &productos[i].tiempoFabricacion);
     }
 }
 
-void mostrarProductos(char nombres[][MaximoNombre], float precios[], int cantidad) {
+
+void mostrarProductos (struct Producto productos[], int cantidad) {
     printf("\n--- Lista de Productos ---\n");
     for (int i = 0; i < cantidad; i++) {
-        printf("%d. %s - $%.2f\n", i + 1, nombres[i], precios[i]);
+        printf("%d. %s | Precio: %.2f | Codigo: %d | Cantidad: %d | Tiempo/u: %.2f h\n", i + 1, productos[i].nombre, productos[i].precio, productos[i].codigo, productos[i].cantidad, productos[i].tiempoFabricacion);
     }
 }
 
-void buscarProducto(char nombres[][MaximoNombre], float precios[], int cantidad) {
-    char nombreBusqueda[MaximoNombre];
-    printf("\nIngrese el nombre del producto a buscar: ");
-    fflush(stdin);
-    fgets(nombreBusqueda, MaximoNombre, stdin);
-    nombreBusqueda[strcspn(nombreBusqueda, "\n")] = '\0';
 
-    int encontrado = 0;
-    for (int i = 0; i < cantidad; i++) {
-        if (strcmp(nombreBusqueda, nombres[i]) == 0) {
-            printf("Producto encontrado: %s - $%.2f\n", nombres[i], precios[i]);
-            encontrado = 1;
-            break;
-        }
-    }
-    if (!encontrado) {
-        printf("Producto no encontrado.\n");
-    }
-}
-
-void mostrarMasCaro(char nombres[][MaximoNombre], float precios[], int cantidad) {
-    int maxProducto = 0;
-    for (int i = 1; i < cantidad; i++) {
-        if (precios[i] > precios[maxProducto]) {
-            maxProducto = i;
-        }
-    }
-    printf("Producto mas caro: %s - $%.2f\n", nombres[maxProducto], precios[maxProducto]);
-}
-
-void mostrarMasBarato(char nombres[][MaximoNombre], float precios[], int cantidad) {
-    int minProducto = 0;
-    for (int i = 1; i < cantidad; i++) {
-        if (precios[i] < precios[minProducto]) {
-            minProducto = i;
-        }
-    }
-    printf("Producto mas barato: %s - $%.2f\n", nombres[minProducto], precios[minProducto]);
-}
-
-void calcularPromedio(float precios[], int cantidad) {
-    float suma = 0;
-    for (int i = 0; i < cantidad; i++) {
-        suma += precios[i];
-    }
-    float promedio = suma / cantidad;
-    printf("Precio promedio: $%.2f\n", promedio);
-}
